@@ -27,9 +27,11 @@ url: "https://fruizg0302.github.io"
 github_username: fruizg0302
 
 # Build settings
-theme: minima
+theme: jekyll-theme-primer
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
 
 # Exclude from processing.
 # The following items will not be processed, by default.
