@@ -103,12 +103,14 @@ The supervised alternatives:
 
 The check matches a simple AST pattern:
 
+{% raw %}
 ```elixir
 # Matches: Task.async(...), Task.start(...), Task.start_link(...)
 # Does NOT match: Task.Supervisor.async(...), different alias shape
 {{:., _, [{:__aliases__, _, [:Task]}, func]}, meta, _}
 when func in [:async, :start, :start_link]
 ```
+{% endraw %}
 
 It only runs against `lib/`. Test files can use bare `Task.async` since test processes have their own lifecycle.
 
