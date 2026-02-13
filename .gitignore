@@ -1,6 +1,18 @@
-_site
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-.bundle
-vendor
+# Astro
+dist/
+node_modules/
+.astro/
+
+# Pagefind
+public/pagefind/
+
+# Environment
+.env
+.env.*
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
