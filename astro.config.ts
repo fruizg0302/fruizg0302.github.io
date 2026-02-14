@@ -14,6 +14,10 @@ import { SITE } from "./src/config";
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
+  redirects: {
+    "/elixir/quality/2026/02/12/encode-your-rules-as-tools-a-quality-stack-for-elixir.html":
+      "/posts/encode-your-rules-as-tools-a-quality-stack-for-elixir/",
+  },
   integrations: [
     sitemap({
       filter: page => SITE.showArchives || !page.endsWith("/archives"),
