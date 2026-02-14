@@ -11,9 +11,11 @@ type Props = {
 
 const { hideEditPost, post, class: className = "" } = Astro.props;
 
-const href = `${SITE.editPost.url}${post.filePath}`;
+const editPostConfig = SITE.editPost;
+const href =
+  "url" in editPostConfig ? `${editPostConfig.url}${post.filePath}` : "";
 const showEditPost =
-  SITE.editPost.enabled && !hideEditPost && href.trim() !== "";
+  editPostConfig.enabled && !hideEditPost && href.trim() !== "";
 ---
 
 {
@@ -28,7 +30,7 @@ const showEditPost =
       ]}
     >
       <IconEdit class="inline-block" />
-      <span>{SITE.editPost.text}</span>
+      <span>{"text" in editPostConfig ? editPostConfig.text : "Edit"}</span>
     </a>
   )
 }
