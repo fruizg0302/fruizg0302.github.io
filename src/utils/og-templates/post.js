@@ -205,7 +205,11 @@ export default async post => {
                           {
                             type: "span",
                             props: {
-                              style: { overflow: "hidden", fontWeight: "bold", color: "#cdd6f4" },
+                              style: {
+                                overflow: "hidden",
+                                fontWeight: "bold",
+                                color: "#cdd6f4",
+                              },
                               children: SITE.title,
                             },
                           },

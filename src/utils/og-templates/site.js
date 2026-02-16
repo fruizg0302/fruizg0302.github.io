@@ -77,7 +77,11 @@ export default async () => {
                           {
                             type: "p",
                             props: {
-                              style: { fontSize: 72, fontWeight: "bold", color: "#cdd6f4" },
+                              style: {
+                                fontSize: 72,
+                                fontWeight: "bold",
+                                color: "#cdd6f4",
+                              },
                               children: SITE.title,
                             },
                           },
@@ -104,7 +108,11 @@ export default async () => {
                         children: {
                           type: "span",
                           props: {
-                            style: { overflow: "hidden", fontWeight: "bold", color: "#cdd6f4" },
+                            style: {
+                              overflow: "hidden",
+                              fontWeight: "bold",
+                              color: "#cdd6f4",
+                            },
                             children: new URL(SITE.website).hostname,
                           },
                         },

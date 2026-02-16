@@ -13,7 +13,9 @@ const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 const { title, description, ...props } = data;
 ---
 
-<li class="my-6 border-l-2 border-transparent pl-4 transition-colors hover:border-accent">
+<li
+  class="my-6 border-l-2 border-transparent pl-4 transition-colors hover:border-accent"
+>
   <a
     href={getPath(id, filePath)}
     class:list={[

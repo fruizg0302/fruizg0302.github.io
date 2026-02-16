@@ -95,7 +95,7 @@
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply relative flex rounded-lg border pt-8 bg-(--shiki-light-bg) text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+    @apply relative flex rounded-lg border bg-(--shiki-light-bg) pt-8 text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
   }
 
   /* Terminal window chrome for code blocks */

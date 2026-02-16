@@ -75,11 +75,11 @@ mix credo --strict
 
 Credo ships with dozens of checks. Most defaults are fine, but a few deserve explicit attention:
 
-| Check | Why it matters |
-|---|---|
-| `Readability.Specs` | Enforces `@spec` on public functions, set to low priority, visible in `--strict` |
-| `Warning.UnsafeToAtom` | Prevents `String.to_atom/1` on untrusted input (atoms aren't garbage collected, so it's a DoS vector) |
-| `Warning.Dbg` / `Warning.IoInspect` | Catches debug statements left in code |
+| Check                                        | Why it matters                                                                                                                                  |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Readability.Specs`                          | Enforces `@spec` on public functions, set to low priority, visible in `--strict`                                                                |
+| `Warning.UnsafeToAtom`                       | Prevents `String.to_atom/1` on untrusted input (atoms aren't garbage collected, so it's a DoS vector)                                           |
+| `Warning.Dbg` / `Warning.IoInspect`          | Catches debug statements left in code                                                                                                           |
 | `Warning.ApplicationConfigInModuleAttribute` | Module attributes are evaluated at compile time; reading app config there bakes in compile-time values that won't respect runtime configuration |
 
 ### Writing Custom Checks
@@ -140,16 +140,16 @@ The correct approach for expected error conditions is pattern matching or tagged
 
 Here are all eight checks. The two above got the deep-dive; the rest are straightforward:
 
-| ID | Check | Category | What it flags |
-|---|---|---|---|
-| EX9001 | NoNestedModules | Design | More than one `defmodule` per file |
-| EX9002 | NoProcessSleepInTests | Warning | `Process.sleep/1` in test files |
-| EX9003 | NoDeprecatedLiveHelpers | Warning | `live_redirect`, `live_patch`, `form_for`, `inputs_for` |
-| EX9004 | NoForbiddenHttpClients | Warning | HTTPoison, Tesla, or `:httpc` usage (project standardized on Req) |
-| EX9005 | NoUnsupervisedTask | Warning | Bare `Task.async/start/start_link` outside supervision |
-| EX9006 | NoUnsupervisedSpawn | Warning | Bare `spawn/spawn_link` |
-| EX9007 | NoRescueInCallbacks | Design | `try/rescue` inside OTP callbacks |
-| EX9008 | NoSyncCallInCallbacks | Warning | `GenServer.call` inside OTP callbacks (deadlock risk) |
+| ID     | Check                   | Category | What it flags                                                     |
+| ------ | ----------------------- | -------- | ----------------------------------------------------------------- |
+| EX9001 | NoNestedModules         | Design   | More than one `defmodule` per file                                |
+| EX9002 | NoProcessSleepInTests   | Warning  | `Process.sleep/1` in test files                                   |
+| EX9003 | NoDeprecatedLiveHelpers | Warning  | `live_redirect`, `live_patch`, `form_for`, `inputs_for`           |
+| EX9004 | NoForbiddenHttpClients  | Warning  | HTTPoison, Tesla, or `:httpc` usage (project standardized on Req) |
+| EX9005 | NoUnsupervisedTask      | Warning  | Bare `Task.async/start/start_link` outside supervision            |
+| EX9006 | NoUnsupervisedSpawn     | Warning  | Bare `spawn/spawn_link`                                           |
+| EX9007 | NoRescueInCallbacks     | Design   | `try/rescue` inside OTP callbacks                                 |
+| EX9008 | NoSyncCallInCallbacks   | Warning  | `GenServer.call` inside OTP callbacks (deadlock risk)             |
 
 Each one replaced a prose rule that the AI wasn't consistently following across sessions.
 
@@ -179,13 +179,13 @@ dialyzer: [
 ]
 ```
 
-| Flag | What it catches |
-|---|---|
-| `:unmatched_returns` | Ignoring return values that contain error tuples |
-| `:error_handling` | Unreachable error clauses, functions that always raise |
-| `:underspecs` | `@spec` is more restrictive than what the code actually returns |
-| `:extra_return` | `@spec` includes return types the code never produces |
-| `:missing_return` | Code returns types not declared in the `@spec` |
+| Flag                 | What it catches                                                 |
+| -------------------- | --------------------------------------------------------------- |
+| `:unmatched_returns` | Ignoring return values that contain error tuples                |
+| `:error_handling`    | Unreachable error clauses, functions that always raise          |
+| `:underspecs`        | `@spec` is more restrictive than what the code actually returns |
+| `:extra_return`      | `@spec` includes return types the code never produces           |
+| `:missing_return`    | Code returns types not declared in the `@spec`                  |
 
 The `:unmatched_returns` flag deserves special mention. It forces you to write `_ = PubSub.broadcast(...)` for fire-and-forget calls, making the decision to ignore a return value explicit and visible when reviewing a diff. It's a small thing that prevents a category of silent failure.
 
@@ -225,10 +225,7 @@ It catches things that would otherwise require a security-focused eye to spot ma
 {
   "minimum_coverage": 70,
   "treat_no_relevant_lines_as_covered": true,
-  "skip_files": [
-    "test/support",
-    "lib/my_app_web/components/core_components.ex"
-  ]
+  "skip_files": ["test/support", "lib/my_app_web/components/core_components.ex"]
 }
 ```
 
@@ -289,14 +286,14 @@ Notice the subtle difference: `precommit` auto-formats your code and removes unu
 
 Not every rule can become a tool. Here's what still lives in documentation, and why:
 
-| Rule | Why it resists automation |
-|---|---|
-| Use `stream/3` for collections, never assign lists | Requires understanding the template's intent, can't distinguish lists-as-assigns from other list usage |
-| Use `to_form/2` for forms, never pass changesets directly | Needs template-aware analysis beyond Credo's scope |
-| Fields set programmatically must not be in `cast` calls | Requires understanding the domain intent of each field |
-| PubSub broadcasts after DB transaction commits | Requires understanding transaction boundaries |
-| Use `start_supervised!/1` in tests | Can't statically distinguish test setup from production code |
-| HEEx template conventions (`:for`, class list syntax) | Needs HEEx-aware AST analysis that doesn't exist yet |
+| Rule                                                      | Why it resists automation                                                                              |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Use `stream/3` for collections, never assign lists        | Requires understanding the template's intent, can't distinguish lists-as-assigns from other list usage |
+| Use `to_form/2` for forms, never pass changesets directly | Needs template-aware analysis beyond Credo's scope                                                     |
+| Fields set programmatically must not be in `cast` calls   | Requires understanding the domain intent of each field                                                 |
+| PubSub broadcasts after DB transaction commits            | Requires understanding transaction boundaries                                                          |
+| Use `start_supervised!/1` in tests                        | Can't statically distinguish test setup from production code                                           |
+| HEEx template conventions (`:for`, class list syntax)     | Needs HEEx-aware AST analysis that doesn't exist yet                                                   |
 
 This is the honest remainder. These rules require understanding intent, not just syntax. They stay in the docs, and those docs are now short enough that both I and my AI assistant actually absorb them. A 30-line conventions section gets followed. A 450-line `AGENTS.md` gets skimmed.
 
