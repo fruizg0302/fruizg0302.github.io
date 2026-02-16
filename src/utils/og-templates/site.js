@@ -8,7 +8,7 @@ export default async () => {
       type: "div",
       props: {
         style: {
-          background: "#fefbfb",
+          background: "#1e1e2e",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -23,8 +23,8 @@ export default async () => {
                 position: "absolute",
                 top: "-1px",
                 right: "-1px",
-                border: "4px solid #000",
-                background: "#ecebeb",
+                border: "4px solid #45475a",
+                background: "#313244",
                 opacity: "0.9",
                 borderRadius: "4px",
                 display: "flex",
@@ -39,8 +39,8 @@ export default async () => {
             type: "div",
             props: {
               style: {
-                border: "4px solid #000",
-                background: "#fefbfb",
+                border: "4px solid #45475a",
+                background: "#1e1e2e",
                 borderRadius: "4px",
                 display: "flex",
                 justifyContent: "center",
@@ -77,14 +77,14 @@ export default async () => {
                           {
                             type: "p",
                             props: {
-                              style: { fontSize: 72, fontWeight: "bold" },
+                              style: { fontSize: 72, fontWeight: "bold", color: "#cdd6f4" },
                               children: SITE.title,
                             },
                           },
                           {
                             type: "p",
                             props: {
-                              style: { fontSize: 28 },
+                              style: { fontSize: 28, color: "#cdd6f4" },
                               children: SITE.desc,
                             },
                           },
@@ -104,7 +104,7 @@ export default async () => {
                         children: {
                           type: "span",
                           props: {
-                            style: { overflow: "hidden", fontWeight: "bold" },
+                            style: { overflow: "hidden", fontWeight: "bold", color: "#cdd6f4" },
                             children: new URL(SITE.website).hostname,
                           },
                         },
