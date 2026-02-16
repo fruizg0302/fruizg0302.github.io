@@ -11,6 +11,7 @@
     h4,
     th {
       @apply mb-3 text-foreground;
+      font-family: var(--font-heading);
     }
 
     h3 {
@@ -68,6 +69,7 @@
 
     code {
       @apply rounded bg-muted/75 p-1 wrap-break-word text-foreground before:content-none after:content-none;
+      font-family: var(--font-heading);
     }
 
     .astro-code code {
@@ -93,7 +95,22 @@
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
-    @apply flex border bg-(--shiki-light-bg) text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+    @apply relative flex rounded-lg border bg-(--shiki-light-bg) pt-8 text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+  }
+
+  /* Terminal window chrome for code blocks */
+  .astro-code::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ed8796;
+    box-shadow:
+      20px 0 0 #eed49f,
+      40px 0 0 #a6da95;
   }
 
   html[data-theme="dark"] .astro-code {

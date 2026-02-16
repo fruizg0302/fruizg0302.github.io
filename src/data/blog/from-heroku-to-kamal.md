@@ -353,13 +353,13 @@ The walkthrough above runs PostgreSQL and the Rails container on the same Hetzne
 
 But for a production environment that needs to grow, the wisest path is to **decouple your database onto a separate server**:
 
-| Concern | Single Server | Decoupled |
-|---|---|---|
-| **Resource contention** | Puma and PostgreSQL compete for RAM/CPU | Each gets dedicated resources |
-| **Backup & restore** | Dump from the same machine under load | Independent backup schedules, no app impact |
-| **Scaling** | Upgrade the entire server to get more DB power | Scale app and DB independently |
-| **Security** | One breach exposes everything | Database on a private network, no public IP |
-| **Maintenance** | OS update = downtime for both | Patch app server without touching the DB |
+| Concern                 | Single Server                                  | Decoupled                                   |
+| ----------------------- | ---------------------------------------------- | ------------------------------------------- |
+| **Resource contention** | Puma and PostgreSQL compete for RAM/CPU        | Each gets dedicated resources               |
+| **Backup & restore**    | Dump from the same machine under load          | Independent backup schedules, no app impact |
+| **Scaling**             | Upgrade the entire server to get more DB power | Scale app and DB independently              |
+| **Security**            | One breach exposes everything                  | Database on a private network, no public IP |
+| **Maintenance**         | OS update = downtime for both                  | Patch app server without touching the DB    |
 
 The migration path is straightforward with Kamal:
 
@@ -387,16 +387,16 @@ The whole process takes an afternoon. The savings last forever.
 
 The developer experience is closer to Heroku than you might think:
 
-| Task | Heroku | Kamal |
-|---|---|---|
-| Deploy | `git push heroku main` | `bin/kamal deploy -d production` |
-| Rollback | `heroku rollback` | `bin/kamal rollback -d production` |
-| Logs | `heroku logs --tail` | `bin/kamal logs -d production` |
-| Console | `heroku run rails console` | `bin/kamal console -d production` |
-| Env vars | `heroku config:set KEY=value` | Edit `deploy.yml`, redeploy |
-| DB migrate | `heroku run rails db:migrate` | Automatic on deploy |
-| SSL | Automatic | Automatic |
-| Zero-downtime | Yes (Preboot) | Yes (kamal-proxy) |
+| Task          | Heroku                        | Kamal                              |
+| ------------- | ----------------------------- | ---------------------------------- |
+| Deploy        | `git push heroku main`        | `bin/kamal deploy -d production`   |
+| Rollback      | `heroku rollback`             | `bin/kamal rollback -d production` |
+| Logs          | `heroku logs --tail`          | `bin/kamal logs -d production`     |
+| Console       | `heroku run rails console`    | `bin/kamal console -d production`  |
+| Env vars      | `heroku config:set KEY=value` | Edit `deploy.yml`, redeploy        |
+| DB migrate    | `heroku run rails db:migrate` | Automatic on deploy                |
+| SSL           | Automatic                     | Automatic                          |
+| Zero-downtime | Yes (Preboot)                 | Yes (kamal-proxy)                  |
 
 ---
 

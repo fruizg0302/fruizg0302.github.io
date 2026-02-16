@@ -90,6 +90,7 @@ BW_SESSION="<your-session-token>" bw create item "$ENCODED"
 ```
 
 Item types reference:
+
 - 1 = Login
 - 2 = Secure Note
 - 3 = Card
@@ -158,6 +159,7 @@ BW_SESSION="<your-session-token>" bw create item "$ENCODED"
 ```
 
 Field types:
+
 - 0 = Text (visible in the UI)
 - 1 = Hidden (recommended for secrets)
 
