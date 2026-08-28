@@ -19,7 +19,7 @@ In September 2017, astronomers spotted something that had never been seen before
 
 I wanted to track it. Not with a telescope, but with code. A real-time 3D visualization of the solar system showing where these objects are, where they've been, and how their trajectories compare. The stack I reached for might surprise you: Elixir, Wolfram Language, and a library I had to write from scratch to make them talk to each other.
 
-![Atlas Tracker showing three interstellar trajectories cutting through the solar system, with planets on Keplerian orbits and a time slider for synchronized replay](@assets/images/atlas-tracker-solar-system.png)
+![Atlas Tracker showing three interstellar trajectories cutting through the solar system, with planets on Keplerian orbits and a time slider for synchronized replay](@/assets/images/atlas-tracker-solar-system.png)
 
 ## The problem with connecting Elixir to Wolfram
 
