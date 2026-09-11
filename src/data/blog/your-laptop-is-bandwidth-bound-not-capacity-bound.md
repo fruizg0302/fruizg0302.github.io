@@ -10,7 +10,7 @@ tags:
   - local-ai
   - amd
   - benchmarks
-description: "What 56 GB of unified memory on a Strix Halo laptop actually buys you for local LLM inference — and why prefill, not decode, is the number that matters."
+description: "What 56 GB of unified memory on a Strix Halo laptop actually buys you for local LLM inference, and why prefill, not decode, is the number that matters."
 ---
 
 I spent a couple of days benchmarking local LLM inference on an ASUS TUF Gaming A14
@@ -21,7 +21,7 @@ your model's attention scales with context depth. Total RAM barely enters into i
 
 ## Raising the GTT ceiling
 
-On an APU there is no VRAM to speak of — the BIOS UMA frame buffer is 512 MB and should
+On an APU there is no VRAM to speak of. The BIOS UMA frame buffer is 512 MB and should
 stay there. What the GPU actually allocates from is GTT, and the kernel caps GTT at half
 of system RAM by default (~31 GB here). Two kernel parameters raise it:
 
@@ -44,8 +44,8 @@ A dense 70B *fits* in 56 GB. It is also unusable. A dense model activates every 
 for every token, so at this machine's ~156 GB/s it lands around 4–5 tok/s. Fitting and
 being usable are different questions, and the GTT bump only answered the first.
 
-This is the whole lesson: **spare RAM cannot be spent on speed.** Only sparse MoE models —
-few active parameters per token — are worth running here.
+This is the whole lesson: **spare RAM cannot be spent on speed.** Only sparse MoE models,
+few active parameters per token, are worth running here.
 
 ## Benchmark method
 
@@ -80,7 +80,7 @@ architecture it wasn't derived from:
 | Qwen3-Coder-Next (**12** attn layers, 2 kv heads) | 24 KiB | 0.75 | 1.5 | 3.0 GiB |
 
 That middle row is why GLM-4.5-Air was ruled out without downloading it: at 128K it needs
-about 65 GiB, over the ceiling, and the quant small enough to fit is 2-bit — which
+about 65 GiB, over the ceiling, and the quant small enough to fit is 2-bit, which
 llama.cpp's own documentation calls "extreme quality loss, not recommended". The quant
 that fits is not the quant that is good.
 
@@ -117,7 +117,7 @@ both loaded at 128K:
 | 37,171 | 28.4 | **34.4** | 246 t/s | **389** t/s |
 | 74,385 | 19.1 | **29.4** | 92 t/s | **323** t/s |
 
-**The curves cross between 9K and 37K.** Below that the 30B is genuinely faster — about
+**The curves cross between 9K and 37K.** Below that the 30B is genuinely faster, about
 35% quicker on short prompts. Above it, Coder-Next wins and the gap widens: +21% decode
 at 37K, +54% at 74K. Retention against each model's own shallow figure: the 30B holds
 33.5% at 74K, Coder-Next holds 69.6%.
@@ -137,7 +137,7 @@ End to end, a finished 300-token answer at 74K context:
 3.4× faster at depth, for 2.6 GiB more memory.
 
 And because its KV cache is tiny, doubling the window from 128K to 256K costs **3.2 GiB
-and nothing else** — 42.84 GiB total, 13.2 GiB of headroom, decode measured at 42.7 tok/s
+and nothing else**: 42.84 GiB total, 13.2 GiB of headroom, decode measured at 42.7 tok/s
 versus 42.3 at 128K, i.e. unchanged. The 30B could not reach 256K at all; KV alone would
 be 24 GiB.
 
@@ -146,7 +146,7 @@ be 24 GiB.
 **ROCm is not faster than Vulkan here.** On a third model (Laguna S 2.1, 118B-A8B) on the
 same 35K prompt, ROCm prefilled at 181 tok/s against Vulkan's 227, and decoded at 12.8
 against 33. Vulkan stays selected. LM Studio 0.4.24 doesn't even ship a ROCm backend, so
-the widely-cited `gfx1151` ROCm crash is unreachable — don't paste the README "fix" that
+the widely-cited `gfx1151` ROCm crash is unreachable. Don't paste the README "fix" that
 pins a runtime version that doesn't exist on your install.
 
 **Batch size can hang the GPU.** LM Studio's default load for that model (batch 2048,
@@ -155,7 +155,7 @@ timeout`, a compute ring reset, and a `vk::DeviceLostError` abort. Batch 512 / u
 with a q8_0 KV cache fixed it.
 
 **Your client's timeouts are now a real problem.** OpenCode defaults `headerTimeout` and
-`chunkTimeout` to 300 s. Measured prefill at 74K is 230 s, and 256K is well past that —
+`chunkTimeout` to 300 s. Measured prefill at 74K is 230 s, and 256K is well past that, so
 the defaults abort a perfectly healthy request mid-prompt and it looks like a model
 failure. Raise them to an hour.
 
@@ -169,5 +169,5 @@ the same link. Also never pass `--max-time` to a large download; use
 The 64 GB unified memory is real and it is useful, but not in the way the spec sheet
 implies. It does not let you run big dense models usefully; it lets you run a sparse MoE
 with an enormous context window. The two numbers to check before you download anything are
-the model's active parameter count and its KV bytes per token — and of those, the second
+the model's active parameter count and its KV bytes per token, and of those, the second
 one is the one nobody quotes.
