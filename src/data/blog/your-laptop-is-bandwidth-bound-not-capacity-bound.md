@@ -3,7 +3,7 @@ title: "Your Laptop Is Bandwidth-Bound, Not Capacity-Bound"
 author: Fernando Ruiz
 pubDatetime: 2026-09-11T00:00:00Z
 slug: "your-laptop-is-bandwidth-bound-not-capacity-bound"
-featured: false
+featured: true
 draft: false
 tags:
   - llm
