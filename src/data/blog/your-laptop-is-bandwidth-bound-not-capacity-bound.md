@@ -2,6 +2,7 @@
 title: "Your Laptop Is Bandwidth-Bound, Not Capacity-Bound"
 author: Fernando Ruiz
 pubDatetime: 2026-09-11T00:00:00Z
+modDatetime: 2026-09-19T22:00:00Z
 slug: "your-laptop-is-bandwidth-bound-not-capacity-bound"
 featured: true
 draft: false
@@ -12,6 +13,12 @@ tags:
   - benchmarks
 description: "What 56 GB of unified memory on a Strix Halo laptop actually buys you for local LLM inference, and why prefill, not decode, is the number that matters."
 ---
+
+> **September 19 follow-up:** [New tuning results, measured crossover points, and a
+> 225K-context test](/posts/strix-halo-llm-tuning-follow-up/). q8_0 nearly doubled
+> 30B prefill at 74K, and Laguna benefited from a larger physical batch. The follow-up
+> also clarifies full-prompt processing versus cache reuse, and the cost of actually
+> filling a larger context window. The original measurements below are retained.
 
 I spent a couple of days benchmarking local LLM inference on an ASUS TUF Gaming A14
 (Ryzen AI MAX+ 392, Radeon 8060S / `gfx1151`, 64 GB unified memory, Arch + Omarchy 4).
