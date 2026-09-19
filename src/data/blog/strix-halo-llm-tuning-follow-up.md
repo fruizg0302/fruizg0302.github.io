@@ -2,6 +2,7 @@
 title: "Strix Halo Follow-Up: Faster Prompts, Smaller Caches, and 225K Context"
 author: Fernando Ruiz
 pubDatetime: 2026-09-19T22:00:00Z
+modDatetime: 2026-09-19T23:22:51Z
 slug: "strix-halo-llm-tuning-follow-up"
 featured: true
 draft: false
@@ -211,13 +212,48 @@ A short client timeout can end such a request before the model starts answering.
 For my workload, trimming the new context sent on a turn remains valuable even
 when the full prompt fits comfortably in memory.
 
-## What stays in my setup
+## TL;DR: recommended configurations for programmers
+
+For programming on this 64 GB Strix Halo laptop, I would start with **30B for
+focused edits, small code questions, and short prompts**. Use **Coder-Next for
+larger repository context**, especially around 28K tokens and deeper when sending
+substantial new code. Around 18.5K they effectively tie; treat **20–30K as a
+transition band**, with the choice depending on how much new context each turn
+needs to process.
+
+These are the presets I would keep in LM Studio. Batch sizes below are logical /
+physical, and the context column is the configured window, not the deepest prompt
+tested.
 
 | Model      | K/V cache | Logical / physical batch | Configured tokens / slots |
 | ---------- | --------- | ------------------------ | ------------------------- |
 | 30B        | q8_0      | 2048 / 512               | 131,072 / 1               |
 | Coder-Next | f16       | 2048 / 512               | 262,144 / 4               |
 | Laguna     | q8_0      | 512 / 512                | 262,144 / 2               |
+
+The weight quants remain **UD-Q6_K_XL for 30B, UD-IQ4_XS for Coder-Next, and
+UD-Q2_K_XL for Laguna**. The cache column refers only to K and V. Use the Laguna
+preset if Laguna already suits your coding workflow: increasing physical batch to
+512 makes large prompts faster to ingest. These tests do not rank the models'
+coding ability.
+
+For planning memory and waiting time:
+
+- **30B:** about **31.9 GiB peak GTT**, tested through **74K**. The clearest tuning
+  win was q8_0: nearly twice the prefill throughput and 24% faster generation at
+  that depth.
+- **Coder-Next:** about **43.2 GiB peak GTT**, tested through **225K**. Keep f16 as
+  the selected default; q8_0 remains a candidate for workloads dominated by
+  long-context generation. Do not expect interactive turnaround when ingesting
+  225K new tokens: prefill alone took **17.6 minutes**.
+- **Laguna:** about **45.1 GiB peak GTT**, tested through **122K**. Keep q8_0 and
+  batch 512 / 512 with two slots; the measured gain is faster prompt processing,
+  with generation speed essentially unchanged.
+
+For a coding assistant, send the files and excerpts needed for the current task,
+preserve reusable prompt prefixes where your client supports it, and allow enough
+request time for large uncached prompts. The largest available context window
+does not need to become the default amount of code sent on every turn.
 
 All three use Vulkan and flash attention. After the benchmarks, I also made
 Coder-Next's sampling defaults explicit: top_p 0.95, top_k 40, repetition penalty
@@ -240,3 +276,8 @@ The [complete measurement data](/data/strix-halo-perf-2026-09-19.json) includes 
 the tested variants. The
 [chart script](https://github.com/fruizg0302/fruizg0302.github.io/blob/master/scripts/plot-strix-halo-followup.py)
 rebuilds the figure from that data.
+
+### AI usage disclosure
+
+_Codex GPT-6 Astra conducted the benchmark tests on my laptop, collected and
+analyzed the results, and helped me write and edit this post._
