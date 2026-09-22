@@ -1,0 +1,118 @@
+{
+  "preset": "",
+  "operation": {
+    "fields": []
+  },
+  "load": {
+    "fields": [
+      {
+        "key": "llm.load.contextLength",
+        "value": 262144
+      },
+      {
+        "key": "llm.load.numParallelSessions",
+        "value": 1
+      },
+      {
+        "key": "llm.load.useUnifiedKvCache",
+        "value": true
+      },
+      {
+        "key": "llm.load.llama.acceleration.offloadRatio",
+        "value": "max"
+      },
+      {
+        "key": "llm.load.gpuStrictVramCap",
+        "value": false
+      },
+      {
+        "key": "llm.load.offloadKVCacheToGpu",
+        "value": true
+      },
+      {
+        "key": "llm.load.llama.flashAttention",
+        "value": true
+      },
+      {
+        "key": "llm.load.llama.evalBatchSize",
+        "value": 512
+      },
+      {
+        "key": "llm.load.llama.physicalBatchSize",
+        "value": 512
+      },
+      {
+        "key": "llm.load.llama.contextCheckpoints",
+        "value": 32
+      },
+      {
+        "key": "llm.load.llama.kCacheQuantizationType",
+        "value": {
+          "checked": true,
+          "value": "q8_0"
+        }
+      },
+      {
+        "key": "llm.load.llama.vCacheQuantizationType",
+        "value": {
+          "checked": true,
+          "value": "q8_0"
+        }
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftMtp",
+        "value": true
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftSimple",
+        "value": false
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftDflashSidecar",
+        "value": false
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftDsparkSidecar",
+        "value": false
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftMtpSidecar",
+        "value": false
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftModel",
+        "value": ""
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftMaxTokens",
+        "value": 2
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftMinTokens",
+        "value": 1
+      },
+      {
+        "key": "llm.load.llama.speculativeDecoding.draftMinContinueProbability",
+        "value": 0
+      },
+      {
+        "key": "llm.load.llama.argumentsOverride",
+        "value": {
+          "enabled": true,
+          "excludeAllConfig": false,
+          "disabledParameters": [],
+          "overrideParameters": [
+            {
+              "key": "--spec-draft-type-k",
+              "value": "q8_0"
+            },
+            {
+              "key": "--spec-draft-type-v",
+              "value": "q8_0"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

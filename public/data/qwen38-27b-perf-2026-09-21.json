@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "measurement_date": "2026-09-21",
+  "timezone": "America/Mexico_City",
+  "model": {
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "file": "Qwen3.8-27B-UD-Q5_K_S.gguf",
+    "revision": "4ca720788d1e01f1bff70c033e0d0028fd02e502",
+    "bytes": 18665753504,
+    "verified_sha256": "d8d62ffcf84d42658dd6ccf9782b4d0404700af78b26d750507510c7597b5bfe"
+  },
+  "system": {
+    "machine": "ASUS TUF Gaming A14",
+    "cpu": "AMD Ryzen AI MAX+ 392",
+    "gpu": "Radeon 8060S (gfx1151)",
+    "installed_unified_ram_gb": 64,
+    "gtt_ceiling_gib": 56,
+    "reserved_vram_gib": 4,
+    "power": "AC, performance profile",
+    "kernel": "7.2.5-3-omarchy-bore",
+    "mesa": "26.2.2-1",
+    "lm_studio_package": "0.4.24-2",
+    "vulkan_runtime": "2.42.0",
+    "server_commit": "c21284c"
+  },
+  "load_settings": {
+    "context_tokens": 262144,
+    "parallel_slots": 1,
+    "offload": "full GPU",
+    "flash_attention": true,
+    "main_cache_k": "q8_0",
+    "main_cache_v": "q8_0",
+    "draft_cache_k": "q8_0",
+    "draft_cache_v": "q8_0",
+    "logical_batch": 512,
+    "physical_batch": 512,
+    "context_checkpoints": 32,
+    "mtp_min_draft_tokens": 1,
+    "draft_continue_probability_cutoff": 0
+  },
+  "method": {
+    "timing_source": "server logs",
+    "fresh_load": "before every timed context point",
+    "prompt": "synthetic JavaScript filler",
+    "filler_seed": 7,
+    "completion_limit_tokens": 300,
+    "temperature": 0,
+    "thinking": false,
+    "cooldown_between_variants_s": 150,
+    "memory_sample_interval_s": 2,
+    "gtt_stop_gib": 50,
+    "minimum_available_host_stop_gib": 3,
+    "noise_rule": "larger of 5% or repeated-baseline spread",
+    "chart_baseline": "faster of baseline-b and baseline-c at shared shallow depths; baseline-deep at 40847",
+    "chart_mtp2": "mtp-2-confirm; mtp-2-native at 246678",
+    "notes": [
+      "The excluded control used different thinking control.",
+      "Saved-settings verification is separate from the initial comparison.",
+      "No MTP-off baseline at 246678 input tokens.",
+      "Memory includes other GPU clients and the desktop.",
+      "No long-context retrieval, coding-quality, vision, or extended-context evaluation."
+    ]
+  },
+  "session_observations": {
+    "compute_timeouts_resets_device_loss_oom": false,
+    "display_warning": "One DisplayPort DPCD read warning during testing, also observed repeatedly before testing; causality not established.",
+    "final_swap_mib": 164,
+    "initial_swap_mib": 0,
+    "thermal_spot_check": {
+      "cpu_tctl_c": 95.2,
+      "gpu_edge_c": 95.0,
+      "ppt_w": 84.77,
+      "throttling_history_measured": false
+    },
+    "basic_thinking_and_nonthinking_sanity": "passed"
+  },
+  "runs": [
+    {
+      "run_id": "baseline-a",
+      "role": "excluded_control",
+      "mtp_max_draft_tokens": 0,
+      "points": [
+        {
+          "prompt_tokens": 1356,
+          "completion_tokens": 300,
+          "prefill_tps": 257.57,
+          "prefill_ms": 5264.55,
+          "decode_tps": 10.62,
+          "decode_ms": 28157.02,
+          "load_gtt_gib": 22.87548065185547
+        }
+      ],
+      "peak_sampled_gtt_gib": 22.90064239501953,
+      "minimum_sampled_host_available_gib": 27.983074188232422,
+      "monitored_compute_errors": [],
+      "exclusion_reason": "Requested thinking-off through the OpenAI-compatible endpoint, but received 300 reasoning tokens and no answer. Subsequent measurements used explicit SDK thinking control."
+    },
+    {
+      "run_id": "baseline-b",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 0,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 221.03,
+          "prefill_ms": 5953.85,
+          "decode_tps": 10.65,
+          "decode_ms": 28073.18,
+          "load_gtt_gib": 22.929027557373047
+        },
+        {
+          "prompt_tokens": 10173,
+          "completion_tokens": 300,
+          "prefill_tps": 277.53,
+          "prefill_ms": 36655.51,
+          "decode_tps": 10.47,
+          "decode_ms": 28563.47,
+          "load_gtt_gib": 22.930267333984375
+        }
+      ],
+      "peak_sampled_gtt_gib": 23.032875061035156,
+      "minimum_sampled_host_available_gib": 28.09630584716797,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 26.995567321777344
+    },
+    {
+      "run_id": "baseline-c",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 0,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 300.37,
+          "prefill_ms": 4381.19,
+          "decode_tps": 11.29,
+          "decode_ms": 26485.23,
+          "load_gtt_gib": 23.152935028076172
+        },
+        {
+          "prompt_tokens": 10173,
+          "completion_tokens": 300,
+          "prefill_tps": 308.26,
+          "prefill_ms": 33001.52,
+          "decode_tps": 11.09,
+          "decode_ms": 26972.21,
+          "load_gtt_gib": 23.152935028076172
+        }
+      ],
+      "peak_sampled_gtt_gib": 23.253063201904297,
+      "minimum_sampled_host_available_gib": 27.872360229492188,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 27.143844604492188
+    },
+    {
+      "run_id": "mtp-1",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 1,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 289.05,
+          "prefill_ms": 4552.89,
+          "decode_tps": 18.88,
+          "decode_ms": 15835.75,
+          "load_gtt_gib": 24.86730194091797,
+          "draft_tokens_proposed": 158,
+          "draft_tokens_accepted": 141
+        },
+        {
+          "prompt_tokens": 10173,
+          "completion_tokens": 300,
+          "prefill_tps": 293.27,
+          "prefill_ms": 34688.37,
+          "decode_tps": 18.11,
+          "decode_ms": 16510.68,
+          "load_gtt_gib": 24.86730194091797,
+          "draft_tokens_proposed": 159,
+          "draft_tokens_accepted": 140
+        }
+      ],
+      "peak_sampled_gtt_gib": 24.979679107666016,
+      "minimum_sampled_host_available_gib": 25.970726013183594,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 28.81108856201172
+    },
+    {
+      "run_id": "mtp-2",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 2,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 294.05,
+          "prefill_ms": 4475.35,
+          "decode_tps": 23.04,
+          "decode_ms": 12979.94,
+          "load_gtt_gib": 25.01360321044922,
+          "draft_tokens_proposed": 228,
+          "draft_tokens_accepted": 184
+        },
+        {
+          "prompt_tokens": 10173,
+          "completion_tokens": 300,
+          "prefill_tps": 296.05,
+          "prefill_ms": 34362.6,
+          "decode_tps": 21.77,
+          "decode_ms": 13735.11,
+          "load_gtt_gib": 25.01360321044922,
+          "draft_tokens_proposed": 232,
+          "draft_tokens_accepted": 182
+        }
+      ],
+      "peak_sampled_gtt_gib": 25.126628875732422,
+      "minimum_sampled_host_available_gib": 25.670547485351562,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 28.95901107788086
+    },
+    {
+      "run_id": "mtp-3",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 3,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 241.61,
+          "prefill_ms": 5446.74,
+          "decode_tps": 22.44,
+          "decode_ms": 13327.09,
+          "load_gtt_gib": 24.79494857788086,
+          "draft_tokens_proposed": 288,
+          "draft_tokens_accepted": 203
+        },
+        {
+          "prompt_tokens": 10173,
+          "completion_tokens": 300,
+          "prefill_tps": 248.75,
+          "prefill_ms": 40896.54,
+          "decode_tps": 20.98,
+          "decode_ms": 14250.2,
+          "load_gtt_gib": 24.79494857788086,
+          "draft_tokens_proposed": 288,
+          "draft_tokens_accepted": 202
+        }
+      ],
+      "peak_sampled_gtt_gib": 24.982406616210938,
+      "minimum_sampled_host_available_gib": 25.770000457763672,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 28.966678619384766
+    },
+    {
+      "run_id": "baseline-deep",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 0,
+      "points": [
+        {
+          "prompt_tokens": 40847,
+          "completion_tokens": 300,
+          "prefill_tps": 240.11,
+          "prefill_ms": 170118.77,
+          "decode_tps": 10.39,
+          "decode_ms": 28788.44,
+          "load_gtt_gib": 23.10797882080078
+        }
+      ],
+      "peak_sampled_gtt_gib": 23.37291717529297,
+      "minimum_sampled_host_available_gib": 25.738285064697266,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 27.267562866210938
+    },
+    {
+      "run_id": "mtp-2-confirm",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 2,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 286.64,
+          "prefill_ms": 4591.07,
+          "decode_tps": 23.36,
+          "decode_ms": 12798.51,
+          "load_gtt_gib": 25.01626968383789,
+          "draft_tokens_proposed": 228,
+          "draft_tokens_accepted": 184
+        },
+        {
+          "prompt_tokens": 10173,
+          "completion_tokens": 300,
+          "prefill_tps": 293.08,
+          "prefill_ms": 34711.09,
+          "decode_tps": 21.8,
+          "decode_ms": 13715.9,
+          "load_gtt_gib": 25.01626968383789,
+          "draft_tokens_proposed": 232,
+          "draft_tokens_accepted": 182
+        },
+        {
+          "prompt_tokens": 40847,
+          "completion_tokens": 300,
+          "prefill_tps": 228.43,
+          "prefill_ms": 178815.3,
+          "decode_tps": 19.11,
+          "decode_ms": 15647.24,
+          "load_gtt_gib": 25.01626968383789,
+          "draft_tokens_proposed": 227,
+          "draft_tokens_accepted": 185
+        }
+      ],
+      "peak_sampled_gtt_gib": 25.402732849121094,
+      "minimum_sampled_host_available_gib": 23.379806518554688,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 29.199840545654297
+    },
+    {
+      "run_id": "mtp-2-native",
+      "role": "measurement",
+      "mtp_max_draft_tokens": 2,
+      "points": [
+        {
+          "prompt_tokens": 246678,
+          "completion_tokens": 300,
+          "prefill_tps": 88.38,
+          "prefill_ms": 2791134.73,
+          "decode_tps": 9.18,
+          "decode_ms": 32555.21,
+          "load_gtt_gib": 24.92501449584961,
+          "draft_tokens_proposed": 243,
+          "draft_tokens_accepted": 176
+        }
+      ],
+      "peak_sampled_gtt_gib": 26.943115234375,
+      "minimum_sampled_host_available_gib": 22.793296813964844,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 30.773677825927734
+    },
+    {
+      "run_id": "saved-defaults",
+      "role": "saved_settings_verification",
+      "mtp_max_draft_tokens": 2,
+      "points": [
+        {
+          "prompt_tokens": 1316,
+          "completion_tokens": 300,
+          "prefill_tps": 284.97,
+          "prefill_ms": 4618.02,
+          "decode_tps": 23.33,
+          "decode_ms": 12815.86,
+          "load_gtt_gib": 24.986339569091797,
+          "draft_tokens_proposed": 228,
+          "draft_tokens_accepted": 184
+        }
+      ],
+      "peak_sampled_gtt_gib": 25.08151626586914,
+      "minimum_sampled_host_available_gib": 24.896663665771484,
+      "monitored_compute_errors": [],
+      "peak_sampled_combined_gtt_vram_gib": 28.94622039794922
+    }
+  ]
+}
