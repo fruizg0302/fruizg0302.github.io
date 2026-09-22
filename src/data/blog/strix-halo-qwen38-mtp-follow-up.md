@@ -2,7 +2,7 @@
 title: "Strix Halo, Part 3: Qwen3.8-27B, MTP, and a 47-Minute Prompt"
 author: Fernando Ruiz
 pubDatetime: 2026-09-22T01:25:00Z
-modDatetime: 2026-09-22T02:01:20Z
+modDatetime: 2026-09-22T02:04:02Z
 slug: "strix-halo-qwen38-mtp-follow-up"
 featured: true
 draft: false
@@ -12,6 +12,32 @@ tags:
   - amd
   - benchmarks
 description: "Qwen3.8-27B fits an 18 GiB weight budget, and two-token MTP roughly doubles short-context generation. A 247K prompt still takes 46.5 minutes to read."
+---
+
+## TL;DR
+
+On this 64 GB Strix Halo laptop, using LM Studio's Vulkan runtime 2.42.0:
+
+- **The 18 GiB weight budget works.** `UD-Q5_K_S` is **17.38 GiB**, and the full
+  **262,144-token window** fits with Q8_0 main and MTP attention caches. Peak
+  sampled GTT was **26.94 GiB**; combined GTT and reserved VRAM use reached
+  **30.77 GiB**, including the desktop and other GPU clients.
+- **Keep two-token MTP.** Short-context generation rose from **11.29 to
+  23.36 tok/s**, and the gain at 40.8K was **84%**. Three draft tokens gave no
+  measurable improvement over two. These comparisons used greedy sampling with
+  thinking off.
+- **The saved preset uses one slot, full GPU offload, flash attention, and
+  batch 512 / 512.** Set both main and draft K/V caches explicitly to **Q8_0**;
+  the draft cache has separate settings. No separate draft model is needed.
+- **MTP does not remove the cold-prompt wait.** At 40.8K, total request time
+  improved only **2.2%, within noise**. The **246,678-token** prompt took
+  **46.5 minutes to process** before generating at **9.18 tok/s**. There was no
+  MTP-off comparison at that depth.
+
+The tested configuration completed without GPU compute resets or timeouts.
+Coding quality and long-context recall still need evaluation before I decide
+whether it replaces an existing model in my workflow.
+
 ---
 
 In [the last round](/posts/strix-halo-llm-tuning-follow-up/), smaller KV caches
