@@ -2,6 +2,7 @@
 title: "Strix Halo, Part 3: Qwen3.8-27B, MTP, and a 47-Minute Prompt"
 author: Fernando Ruiz
 pubDatetime: 2026-09-22T01:25:00Z
+modDatetime: 2026-09-22T02:01:20Z
 slug: "strix-halo-qwen38-mtp-follow-up"
 featured: true
 draft: false
@@ -265,6 +266,11 @@ point, the excluded initial control, the saved-settings verification, draft
 acceptance counts, and sampled memory summaries. The
 [chart script](https://github.com/fruizg0302/fruizg0302.github.io/blob/master/scripts/plot-qwen38-mtp.py)
 rebuilds the figure from that data.
+
+## Further viewing
+
+For more on the model and serving it, see Sam Witteveen's
+[Qwen3.8-27B & How to Serve it Fast](https://youtu.be/PTuGGdDuyPI).
 
 ### AI usage disclosure
 
