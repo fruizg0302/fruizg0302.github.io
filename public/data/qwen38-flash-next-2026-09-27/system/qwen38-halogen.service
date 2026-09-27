@@ -1,0 +1,27 @@
+[Unit]
+Description=Halogen Qwen3.8 with temporary TuneD accelerator performance
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+ExecStartPre=/usr/local/libexec/qwen38-power begin
+ExecStart=/usr/bin/docker run --rm --pull=never --name qwen38-flash-next-test \
+  --device /dev/kfd --device /dev/dri \
+  --group-add 983 --group-add 987 \
+  --ipc=host --ulimit memlock=-1:-1 \
+  --security-opt no-new-privileges --cap-drop NET_ADMIN --cap-drop NET_RAW \
+  -p 127.0.0.1:8731:8731 \
+  -v /home/wowzontle/Models/Qwen3.8-Flash-Next-Halogen:/models:ro \
+  -e HALOGEN_CHECKPOINT=/models/qwen38-flash-next-w4b.hgn \
+  -e HALOGEN_CK_OVERLAY=/models/qwen38-flash-next-w4b.overlay.hgn \
+  -e HALOGEN_TOKENIZER=/models/tokenizer \
+  -e HALOGEN_CTX=65536 -e HALOGEN_KV_POOL_POSITIONS=65536 \
+  -e HALOGEN_KV_SLOTS=1 -e HALOGEN_MAX_TOK=16384 \
+  -e HALOGEN_PROMPT_CACHE=1 \
+  ghcr.io/peonist-ai/halogen-flash-server@sha256:ec7ec0c6f955f48329bb444efa97286dc8216e9ab1b130bc40d7d8c3babdf6b2
+ExecStop=-/usr/bin/docker stop --time 60 qwen38-flash-next-test
+ExecStopPost=/usr/local/libexec/qwen38-power end
+TimeoutStartSec=120
+TimeoutStopSec=120
+Restart=no

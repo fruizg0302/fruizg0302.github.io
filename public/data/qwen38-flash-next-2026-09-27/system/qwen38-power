@@ -1,0 +1,55 @@
+#!/usr/bin/python3
+"""Temporarily give TuneD ownership of power settings for the model service."""
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+state = Path('/run/qwen38-power-state.json')
+
+def run(*args, check=True):
+    return subprocess.run(args, check=check, text=True, capture_output=True)
+
+def active(unit):
+    return run('/usr/bin/systemctl', 'is-active', '--quiet', unit, check=False).returncode == 0
+
+if sys.argv[1:] == ['begin']:
+    if state.exists() or active('tuned.service'):
+        raise SystemExit('TuneD is already owned by another session; refusing to override it.')
+    enabled = run('/usr/bin/systemctl', 'is-enabled', 'power-profiles-daemon.service', check=False).stdout.strip()
+    if enabled.startswith('masked'):
+        raise SystemExit('Power profiles service is already masked; refusing to change its state.')
+    was_active = active('power-profiles-daemon.service')
+    profile = run('/usr/bin/powerprofilesctl', 'get').stdout.strip() if was_active else None
+    state.write_text(json.dumps({'ppd_active': was_active, 'profile': profile,
+                                 'owner': os.environ.get('INVOCATION_ID')}))
+    state.chmod(0o600)
+    run('/usr/bin/systemctl', 'mask', '--runtime', '--now', 'power-profiles-daemon.service')
+    run('/usr/bin/systemctl', 'start', 'tuned.service')
+    run('/usr/bin/tuned-adm', 'profile', 'accelerator-performance')
+    print(run('/usr/bin/tuned-adm', 'active').stdout, flush=True)
+elif sys.argv[1:] == ['end']:
+    if not state.exists():
+        sys.exit(0)
+    previous = json.loads(state.read_text())
+    if previous.get('owner') != os.environ.get('INVOCATION_ID'):
+        raise SystemExit('Power settings belong to another service invocation.')
+    errors = []
+    def restore(*args):
+        p = run(*args, check=False)
+        if p.returncode:
+            errors.append(p.stderr or p.stdout or repr(args))
+    if active('tuned.service'):
+        restore('/usr/bin/tuned-adm', 'off')
+    restore('/usr/bin/systemctl', 'stop', 'tuned.service')
+    restore('/usr/bin/systemctl', 'unmask', '--runtime', 'power-profiles-daemon.service')
+    if previous['ppd_active']:
+        restore('/usr/bin/systemctl', 'start', 'power-profiles-daemon.service')
+        restore('/usr/bin/powerprofilesctl', 'set', previous['profile'])
+    if errors:
+        raise SystemExit('Power restoration needs attention: ' + '; '.join(errors))
+    state.unlink()
+    print('TuneD stopped; previous desktop power profile restored.', flush=True)
+else:
+    raise SystemExit('Usage: qwen38-power begin|end')

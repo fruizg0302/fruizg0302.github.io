@@ -1,0 +1,39 @@
+{
+  "directory": "/home/wowzontle/Work/Experiments/qwen38-flash-next/results/20260927-093157-benchmark",
+  "requests": 80,
+  "generation": {
+    "serial": {
+      "samples": 30,
+      "e2e_mean": 32.51094494265743,
+      "decode_mean": 34.1977,
+      "decode_min": 32.897,
+      "decode_max": 35.005
+    },
+    "mtp": {
+      "samples": 30,
+      "e2e_mean": 46.460247733364234,
+      "decode_mean": 49.90456666666667,
+      "decode_min": 38.873,
+      "decode_max": 58.137
+    }
+  },
+  "cold_prefill": {
+    "1021": {
+      "samples": 6,
+      "e2e_mean": 536.0757766123766
+    },
+    "8185": {
+      "samples": 6,
+      "e2e_mean": 1071.0635727016947
+    },
+    "32773": {
+      "samples": 1,
+      "e2e_mean": 1188.1120533238395
+    }
+  },
+  "cached_prefill_requests": 5,
+  "greedy_output_pairs": {
+    "compared": 30,
+    "identical": 30
+  }
+}
