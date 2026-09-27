@@ -1,0 +1,5 @@
+Sep 27 12:41:24 proart-wowzontle docker[185212]: startup [   0.0 s] host memory: 21158 contiguous 2 MiB blocks of host memory free (42316 MiB)
+Sep 27 12:41:27 proart-wowzontle docker[185212]: startup [   2.2 s] memory: 68.0 GiB of weights locked in RAM, 7.2 GiB of KV pool, 12.2 GiB of working memory, 87.4 GiB in all
+Sep 27 12:41:27 proart-wowzontle docker[185212]: startup [   2.2 s] memory: the model's 47.7 GiB lookup table is NOT held in RAM. It is read from disk through the file cache as each request needs it, which is why this server holds less than the checkpoint is large
+Sep 27 12:41:27 proart-wowzontle docker[185212]: startup [   2.2 s] memory: 4.0 GiB of this machine's RAM is carved out for the iGPU in firmware. That is not free memory the OS can lend to the file cache above, and it does not appear anywhere in /proc/meminfo: the machine simply reports itself smaller
+Sep 27 12:41:27 proart-wowzontle docker[185212]: startup [   2.2 s] host memory left for everything else: 7778 contiguous 2 MiB blocks (16.7 GiB total, most of it not contiguous)

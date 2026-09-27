@@ -1,8 +1,8 @@
 ---
-title: "Strix Halo, Part 4: Flash-Next, 60K Context, and a Parser That Forgot Multiplication"
+title: "Strix Halo, Part 4: Flash-Next, 256K Context, and a Parser That Forgot Multiplication"
 author: Fernando Ruiz
 pubDatetime: 2026-09-27T16:48:42Z
-modDatetime: 2026-09-27T16:54:32Z
+modDatetime: 2026-09-27T18:52:13Z
 slug: "strix-halo-flash-next-quality-follow-up"
 featured: true
 draft: false
@@ -11,7 +11,7 @@ tags:
   - local-ai
   - amd
   - benchmarks
-description: "Flash-Next with Halogen reaches 49.9 tok/s, passes retrieval through 60K context, and exposes a coding mistake. Omarchy tuning, exact settings, and reproducible tests."
+description: "Flash-Next with Halogen passes a 259,933-token retrieval test at 53.13 tok/s with MTP. Omarchy tuning, coding checks, cache-aware timings, and reproducible evidence."
 ---
 
 ## TL;DR
@@ -20,14 +20,15 @@ On a **128 GB ProArt PX13 with Ryzen AI MAX+ 395**, running Qwen3.8 Flash-Next t
 
 - **MTP mode is worth keeping.** Short-prompt decode rose from **34.20 to 49.90 tok/s**, a **46% gain**. All thirty paired outputs matched. This mode included Halogen's default prompt-lookup assistance.
 - **Long-context checks passed through 60K tokens.** Retrieval scored **15/15**; a separate structured-output test maintained **54.2 tok/s** at 60K. Reading a fresh 60K archive and returning its short answer still took **56–57 seconds**.
+- **A near-full 256K test also passed.** Both modes answered the same **259,933-token prompt** correctly and identically. Decode reached **53.13 tok/s with MTP versus 32.58 serial**. The uncached request took **4 minutes 24 seconds**; MTP reused cached input, so its shorter total time is not a cold-prompt speedup. This was one prompt tested in two modes.
 - **Reasoning helped coding in this sample.** Thinking off passed **9/10 tasks**; bounded reasoning passed **10/10**. The failed parser forgot to recognize multiplication. All four coding runs with specifications embedded in 32K context passed.
-- **The desktop stayed running.** The setup used a 115 GiB GTT ceiling, IOMMU disabled, a 65,536-token context, one slot, and temporary TuneD integration. Some TuneD settings did not apply; swap stayed unused in sampled checks.
+- **The desktop stayed running.** The setup used a 115 GiB GTT ceiling, IOMMU disabled, a 65,536-token context for the first suites, a temporary 262,144-token window for the near-full test, one slot, and temporary TuneD integration. Some TuneD settings did not apply; swap stayed unused in sampled checks.
 
 These are **small custom diagnostics**, not a general coding score or a controlled comparison with the previous 27B/A14 setup. I did not isolate the performance contribution of IOMMU or TuneD.
 
 ---
 
-Qwen3.8 Flash-Next reached **49.90 tokens per second** on my short-prompt test with Halogen's MTP mode, compared with **34.20** in serial mode. At approximately 60K input tokens, a separate structured-output test still generated at **54.2 tokens per second**. All fifteen retrieval checks passed. Coding was more revealing: nine of ten problems passed with thinking off, and all ten passed with bounded reasoning.
+Qwen3.8 Flash-Next reached **49.90 tokens per second** on my short-prompt test with Halogen's MTP mode, compared with **34.20** in serial mode. At approximately 60K input tokens, a separate structured-output test still generated at **54.2 tokens per second**. All fifteen retrieval checks passed. A later near-full native-context test also passed with **259,933 input tokens**, generating at **53.13 tokens per second with MTP**. Coding was more revealing: nine of ten problems passed with thinking off, and all ten passed with bounded reasoning.
 
 The failure was small enough to look harmless in a code review: an arithmetic parser implemented multiplication but forgot to let its tokenizer recognize `*`.
 
@@ -35,16 +36,16 @@ That is the useful shape of this follow-up. The server is fast, long inputs work
 
 In [the previous article](https://fruizg0302.github.io/posts/strix-halo-qwen38-mtp-follow-up/), I tested Qwen3.8-27B in LM Studio on a 64 GB ASUS TUF Gaming A14. MTP made generation substantially faster, but coding quality and long-context recall remained open questions. This round starts investigating those questions on a different setup. It does **not** retrospectively validate the earlier 27B model, and the two articles are not a controlled performance comparison.
 
-| Component          | Previous article                 | This test, September 27, 2026                      |
-| ------------------ | -------------------------------- | -------------------------------------------------- |
-| Laptop             | ASUS TUF Gaming A14              | ASUS ProArt PX13 HN7306EAC                         |
-| Processor          | Ryzen AI MAX+ 392                | Ryzen AI MAX+ 395                                  |
-| Installed memory   | 64 GB                            | 128 GB; approximately 121 GiB visible to Linux     |
-| GPU                | Radeon 8060S / gfx1151           | Radeon 8060S / gfx1151                             |
-| Model              | Qwen3.8-27B                      | Qwen3.8-Flash-Next                                 |
-| Weights            | UD-Q5_K_S GGUF                   | Native Halogen W4B checkpoint plus quality overlay |
-| Runtime            | LM Studio, Vulkan runtime 2.42.0 | Halogen Flash Server 0.14.0 in Docker              |
-| Configured context | 262,144 tokens                   | 65,536 tokens                                      |
+| Component          | Previous article                 | This test, September 27, 2026                          |
+| ------------------ | -------------------------------- | ------------------------------------------------------ |
+| Laptop             | ASUS TUF Gaming A14              | ASUS ProArt PX13 HN7306EAC                             |
+| Processor          | Ryzen AI MAX+ 392                | Ryzen AI MAX+ 395                                      |
+| Installed memory   | 64 GB                            | 128 GB; approximately 121 GiB visible to Linux         |
+| GPU                | Radeon 8060S / gfx1151           | Radeon 8060S / gfx1151                                 |
+| Model              | Qwen3.8-27B                      | Qwen3.8-Flash-Next                                     |
+| Weights            | UD-Q5_K_S GGUF                   | Native Halogen W4B checkpoint plus quality overlay     |
+| Runtime            | LM Studio, Vulkan runtime 2.42.0 | Halogen Flash Server 0.14.0 in Docker                  |
+| Configured context | 262,144 tokens                   | 65,536 initially; 262,144 for the later near-full test |
 
 The starting point was [Donato Capitella's video about Flash-Next on Strix Halo](https://www.youtube.com/watch?v=Nm_zN6RQ_eE), which I worked through using a cleaned transcript. It pointed me toward Halogen and toward testing quality alongside speed. The video's results belong to its own setup; the numbers below come from the runs on this laptop.
 
@@ -104,7 +105,7 @@ The [upstream TuneD profile](https://raw.githubusercontent.com/redhat-performanc
 
 TuneD's `reapply_sysctl=1` caused the existing Omarchy sysctl configuration to be reapplied. I left those system settings intact. The precise description of the experiment is therefore **TuneD active with documented settings that did not apply**, rather than a fully verified application of every profile setting. There was no TuneD-off benchmark, either.
 
-Halogen's memory settings were deliberately smaller than its large-pool examples. These were the environment variables in the actual service:
+Halogen's memory settings were deliberately smaller than its large-pool examples. These were the environment variables in the initial 64K service, which remains the normal launch configuration:
 
 ```bash
 HALOGEN_CHECKPOINT=/models/qwen38-flash-next-w4b.hgn
@@ -121,7 +122,7 @@ Here, `HALOGEN_MAX_TOK` controls the prefill arena/call size; it is not the per-
 
 The container received `/dev/kfd` and `/dev/dri`, used `--ipc=host` and unlimited memlock, and mounted the model files read-only. The API was exposed only at `127.0.0.1:8731`. My first launch failed because the image lacked a named `render` group. Passing the host's numeric video/render group IDs—`983` and `987` here—resolved it. Those IDs are machine-specific; readers should inspect their own groups rather than copy the numbers.
 
-At startup, the engine reported approximately **68.0 GiB of locked weights, 1.8 GiB of KV storage and 12.2 GiB of working memory**, for **82.0 GiB** in those allocations. It reported roughly 23.3 GiB remaining at that point. A separate 47.7 GiB lookup table was demand-paged, rather than all locked into RAM with the weights.
+At the initial 64K startup, the engine reported approximately **68.0 GiB of locked weights, 1.8 GiB of KV storage and 12.2 GiB of working memory**, for **82.0 GiB** in those allocations. It reported roughly 23.3 GiB remaining at that point. A separate 47.7 GiB lookup table was demand-paged, rather than all locked into RAM with the weights.
 
 Linux's `MemAvailable` was misleading for this workload because file-cache accounting included pinned weight pages. I used the engine's memory report rather than treating the much larger `free` estimate as permission to load another large model. Swap was unused in the sampled checks. The desktop remained active, but I did not measure UI latency or run a concurrent-workload benchmark.
 
@@ -163,6 +164,37 @@ I also tested generation with the long archive actually present, rather than pai
 
 All six responses were correct, and the messages matched exactly within each pair. Decode stayed close to its 8K rate through 60K on this workload. There was only one pair per depth, and a structured counting response is not representative of arbitrary prose or code. These results should not be combined with the earlier ten-prompt average into a single universal speed figure.
 
+I then tested the **native 262,144-token window**, usually called 256K. A temporary systemd override changed only the context and KV-pool sizes; the model, image, quality overlay, single slot, prefill arena and prompt-cache mode stayed the same:
+
+```bash
+HALOGEN_CTX=262144
+HALOGEN_KV_POOL_POSITIONS=262144
+HALOGEN_KV_SLOTS=1
+HALOGEN_MAX_TOK=16384
+HALOGEN_PROMPT_CACHE=1
+```
+
+The health response confirmed the full context and pool rather than a silently reduced allocation. The actual prompt contained **259,933 tokens, or 99.16% of the window**, with a 1,024-token output allowance. That leaves room for the answer; it is not a claim to fit 262,144 input tokens plus output into the same window.
+
+This archive contained three independent random codes at approximately 5%, 50% and 95% of its rows. The model had to return all three exactly, return `null` for an absent key, and generate every integer from 1 through 128. Serial ran first, MTP second, with thinking off and temperature zero. Both produced **867 output tokens**, passed every check and returned identical messages.
+
+| Near-full-context measurement |      Serial |    MTP mode |
+| ----------------------------- | ----------: | ----------: |
+| Actual input tokens           |     259,933 |     259,933 |
+| Engine decode speed           | 32.58 tok/s | 53.13 tok/s |
+| Full request time             |    263.65 s |     49.63 s |
+| Cached input tokens reused    |           0 |     229,376 |
+| Remaining input processed     |     259,933 |      30,557 |
+| Answer correct                |         Yes |         Yes |
+
+The **1.63× decode ratio** is the useful MTP comparison here. The serial run spent **236.52 seconds** processing the entire uncached prompt, at about **1,099 input tokens per second**, then 26.61 seconds generating its answer. The MTP run reused 229,376 input tokens and processed the remaining 30,557 before generating. Its 49.63-second total includes that cache advantage. Treating 263.65 versus 49.63 seconds as an MTP-only speedup would be wrong.
+
+The larger pool increased the engine's reported allocations to **87.4 GiB**: 68.0 GiB of locked weights, 7.2 GiB of KV storage and 12.2 GiB of working memory. Startup reported **16.7 GiB of host headroom**. Across 69 monitoring samples, roughly five seconds apart, swap use and the memory-pressure stall metric (`full avg10`) both stayed at zero. Minimum sampled `MemFree` was 14.82 GiB. The desktop remained running; these measurements still do not quantify UI responsiveness.
+
+This extends the observed capacity and retrieval result to a near-full native window, but its scope is narrow: **one synthetic prompt in two modes**, with no repeated or counterbalanced comparison. The three code checks, absent-key check and sequence check are parts of that one task, not five independent long-context trials. It does not establish coding ability or general document comprehension at 256K. The [256K report](/data/qwen38-flash-next-2026-09-27/results/20260927-256k/REPORT.md) records the exact timing, cache and memory data.
+
+Afterward, the automation unloaded the model, stopped TuneD, restored the previous desktop `performance` profile and removed the temporary override. The normal launcher remains configured for 65,536 tokens. The [test runner](/data/qwen38-flash-next-2026-09-27/run-256k.py) and [temporary-session helper](/data/qwen38-flash-next-2026-09-27/system/run-256k-session.py) are included with the evidence.
+
 Coding evaluation used ten Python function problems: interval merging, topological sorting, LRU caching, minimum-window substring, wildcard matching, grid paths, CSV parsing, latest-event selection, arithmetic expression parsing and longest increasing subsequence. Together they had **565 deterministic hidden input/output cases**, including empty inputs, cycles, duplicate edges, repeated characters, Unicode, quoted CSV fields and unary operators.
 
 Each problem received one answer with thinking off and one with low reasoning effort. Both used temperature zero and MTP mode. Reasoning runs had a maximum of **1,536 thinking tokens** within a **4,096-token total output budget**. The returned usage confirmed that the off runs used no thinking tokens and the reasoning runs did use them. No repair feedback or second attempt was supplied.
@@ -185,15 +217,15 @@ As a result, `-(2+3)*4` raised `ValueError: Invalid character: *` rather than re
 
 Both long-context versions of the parser also passed, including the one with thinking off. That makes the result more interesting and less universal: this was a first-attempt failure under one prompt, not a demonstrated inability to implement multiplication. Nor is it evidence that padding a prompt makes code better. The sample is too small for either claim.
 
-Across the second suite, **44 of 45 runs passed**: fifteen retrieval checks, six long-context generation checks and twenty-four coding runs. There were no API/harness errors or truncated answers. The coding runs reused the same ten tasks and their cases across conditions; “44/45” is an inventory of this experiment, not a general accuracy score. This was not HumanEval, SWE-bench, Terminal-Bench Mini or a repository-level agent evaluation.
+Across the original quality suite, **44 of 45 runs passed**: fifteen retrieval checks, six long-context generation checks and twenty-four coding runs. There were no API/harness errors or truncated answers. The coding runs reused the same ten tasks and their cases across conditions; “44/45” is an inventory of this experiment, not a general accuracy score. The later 256K pair passed separately and is not included in that 44/45 count. These tests were not HumanEval, SWE-bench, Terminal-Bench Mini or a repository-level agent evaluation.
 
-My practical conclusion is to keep MTP mode enabled in this setup and use bounded reasoning for coding, with executable tests still part of the workflow. The measured decode gain was substantial, and the tested serial/MTP pairs agreed. Long-context retrieval held up through 60K. Reasoning avoided the one short-prompt coding failure in this sample.
+My practical conclusion is to keep MTP mode enabled in this setup and use bounded reasoning for coding, with executable tests still part of the workflow. The measured decode gain was substantial, and the tested serial/MTP pairs agreed. The retrieval battery passed through 60K, and one additional prompt passed at 259,933 input tokens in both modes. Reasoning avoided the one short-prompt coding failure in this sample.
 
-There are clear limits to that conclusion. I have not shown that this model is better than the earlier 27B model, measured the individual benefit of IOMMU or TuneD, tested retrieval near a quarter-million tokens, or established that the model can navigate and modify a real repository. Synthetic archives and isolated functions are useful checks before that work; they do not replace it. Real bug fixes and small features, judged by a project's existing tests and review, are the next useful experiment.
+There are clear limits to that conclusion. I have not shown that this model is better than the earlier 27B model, measured the individual benefit of IOMMU or TuneD, evaluated a broad set of tasks near a quarter-million tokens, or established that the model can navigate and modify a real repository. Synthetic archives and isolated functions are useful checks before that work; they do not replace it. Real bug fixes and small features, judged by a project's existing tests and review, are the next useful experiment.
 
-After testing, I unloaded the model. The service stopped TuneD and restored `power-profiles-daemon` with the previous `performance` profile. Reported host memory use returned to approximately 9.2 GiB, and swap remained unused. The container's shutdown exit code left a systemd failure marker, which I cleared after confirming that engine shutdown and power restoration had completed. The boot-time IOMMU and GTT settings remain in place; stopping the model does not revert them.
+After the initial suites, I unloaded the model. The service stopped TuneD and restored `power-profiles-daemon` with the previous `performance` profile. Reported host memory use returned to approximately 9.2 GiB, and swap remained unused. The container's shutdown exit code left a systemd failure marker, which I cleared after confirming that engine shutdown and power restoration had completed. The boot-time IOMMU and GTT settings remain in place; stopping the model does not revert them.
 
-The local experiment keeps the [corrected throughput report](/data/qwen38-flash-next-2026-09-27/results/20260927-093157-benchmark/REPORT.md), [quality summary](/data/qwen38-flash-next-2026-09-27/results/20260927-quality/SUMMARY.md), [full quality report](/data/qwen38-flash-next-2026-09-27/results/20260927-quality/REPORT.md), [resumable runner](/data/qwen38-flash-next-2026-09-27/run-quality.py), [hidden-case definitions](/data/qwen38-flash-next-2026-09-27/quality-cases.py), and [systemd service](/data/qwen38-flash-next-2026-09-27/system/qwen38-halogen.service) with its [power-management helper](/data/qwen38-flash-next-2026-09-27/system/qwen38-power). Exact prompts, responses, timings, script snapshots and failure details are preserved alongside those reports. The [downloadable evidence bundle](/data/qwen38-flash-next-2026-09-27/evidence.zip) includes the raw requests, responses and generated candidates, with checksums. The [artifact notes](/data/qwen38-flash-next-2026-09-27/README.md) explain how to use the files.
+The local experiment keeps the [corrected throughput report](/data/qwen38-flash-next-2026-09-27/results/20260927-093157-benchmark/REPORT.md), [quality summary](/data/qwen38-flash-next-2026-09-27/results/20260927-quality/SUMMARY.md), [full quality report](/data/qwen38-flash-next-2026-09-27/results/20260927-quality/REPORT.md), [resumable runner](/data/qwen38-flash-next-2026-09-27/run-quality.py), [hidden-case definitions](/data/qwen38-flash-next-2026-09-27/quality-cases.py), and [systemd service](/data/qwen38-flash-next-2026-09-27/system/qwen38-halogen.service) with its [power-management helper](/data/qwen38-flash-next-2026-09-27/system/qwen38-power). Exact prompts, responses, timings, script snapshots and failure details are preserved alongside those reports. The updated [downloadable evidence bundle](/data/qwen38-flash-next-2026-09-27/evidence.zip) includes the raw requests, responses and generated candidates from the earlier suites, plus the 256K prompt, paired answers, memory samples and scripts, with checksums. The [artifact notes](/data/qwen38-flash-next-2026-09-27/README.md) explain how to use the files.
 
 The external sources consulted for preparation and interpretation were:
 

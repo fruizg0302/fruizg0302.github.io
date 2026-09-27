@@ -1,0 +1,8 @@
+{
+  "model": "inactive",
+  "tuned": "inactive",
+  "power_profiles_daemon": "active",
+  "profile": "performance",
+  "runtime_override_removed": true,
+  "power_state_removed": true
+}

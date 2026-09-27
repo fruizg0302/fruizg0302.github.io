@@ -1,0 +1,7 @@
+{
+  "samples": 69,
+  "max_swap_used_mib": 0.0,
+  "max_full_memory_psi_avg10": 0.0,
+  "min_memfree_gib": 14.816516876220703,
+  "max_sample_gap_seconds": 5.011106967926025
+}

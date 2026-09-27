@@ -9,3 +9,7 @@ The throughput wrapper expects the upstream Halogen v0.14.0 checkout at the path
 The saved reports describe the state at measurement time. Any statement that the model remains running is historical; it was unloaded after testing. Original filesystem paths in records are retained for provenance. Generated candidate code is test output, not vetted reusable software.
 
 All raw requests contain synthetic benchmark material. No personal project documents were used in this suite. `SHA256SUMS` verifies every original file packaged in the ZIP.
+
+The 256K extension is a separate two-request experiment at 259,933 input tokens. Its reports live under `results/20260927-256k/`; the ZIP also includes the exact prompt, paired responses, 69 memory samples, startup-memory excerpt, temporary configuration, and cleanup record. Serial was uncached; MTP reused 229,376 cached tokens. The original 44/45 quality-suite count does not include this pair.
+
+`run-256k.py` requires a prepared 262,144-token Halogen server and imports the companion `run-quality.py` and `quality-cases.py`. The session helper is a machine-specific privileged orchestration script, intended for a transient systemd unit with its cleanup action as ExecStopPost. Review and adapt its paths, user and output directory before reuse; it restores the persistent 64K configuration and unloads the model afterward.
