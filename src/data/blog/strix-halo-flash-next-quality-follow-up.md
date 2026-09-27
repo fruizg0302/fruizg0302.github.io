@@ -2,6 +2,7 @@
 title: "Strix Halo, Part 4: Flash-Next, 60K Context, and a Parser That Forgot Multiplication"
 author: Fernando Ruiz
 pubDatetime: 2026-09-27T16:48:42Z
+modDatetime: 2026-09-27T16:54:32Z
 slug: "strix-halo-flash-next-quality-follow-up"
 featured: true
 draft: false
@@ -11,6 +12,19 @@ tags:
   - amd
   - benchmarks
 description: "Flash-Next with Halogen reaches 49.9 tok/s, passes retrieval through 60K context, and exposes a coding mistake. Omarchy tuning, exact settings, and reproducible tests."
+---
+
+## TL;DR
+
+On a **128 GB ProArt PX13 with Ryzen AI MAX+ 395**, running Qwen3.8 Flash-Next through Halogen 0.14.0:
+
+- **MTP mode is worth keeping.** Short-prompt decode rose from **34.20 to 49.90 tok/s**, a **46% gain**. All thirty paired outputs matched. This mode included Halogen's default prompt-lookup assistance.
+- **Long-context checks passed through 60K tokens.** Retrieval scored **15/15**; a separate structured-output test maintained **54.2 tok/s** at 60K. Reading a fresh 60K archive and returning its short answer still took **56–57 seconds**.
+- **Reasoning helped coding in this sample.** Thinking off passed **9/10 tasks**; bounded reasoning passed **10/10**. The failed parser forgot to recognize multiplication. All four coding runs with specifications embedded in 32K context passed.
+- **The desktop stayed running.** The setup used a 115 GiB GTT ceiling, IOMMU disabled, a 65,536-token context, one slot, and temporary TuneD integration. Some TuneD settings did not apply; swap stayed unused in sampled checks.
+
+These are **small custom diagnostics**, not a general coding score or a controlled comparison with the previous 27B/A14 setup. I did not isolate the performance contribution of IOMMU or TuneD.
+
 ---
 
 Qwen3.8 Flash-Next reached **49.90 tokens per second** on my short-prompt test with Halogen's MTP mode, compared with **34.20** in serial mode. At approximately 60K input tokens, a separate structured-output test still generated at **54.2 tokens per second**. All fifteen retrieval checks passed. Coding was more revealing: nine of ten problems passed with thinking off, and all ten passed with bounded reasoning.
